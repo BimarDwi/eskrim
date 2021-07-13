@@ -32,9 +32,9 @@ def player_move(n):
     move = int(input("Choose your tile (1-9): "))
     letter_position[move] = n
 
-    column = int((move - 1) / 3)
-    row = int((move - 1) % 3)
-    position[column][row] = n
+    row = int((move - 1) / 3)
+    column = int((move - 1) % 3)
+    position[row][column] = n
 
 
 def game_status():
