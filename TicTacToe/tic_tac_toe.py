@@ -32,9 +32,9 @@ def player_move(n):
     move = int(input("Choose your tile (1-9): "))
     letter_position[move] = n
 
-    row = int((move - 1) / 3)
-    column = int((move - 1) % 3)
-    position[row][column] = n
+    column = int((move - 1) / 3)
+    row = int((move - 1) % 3)
+    position[column][row] = n
 
 
 def game_status():
@@ -46,6 +46,11 @@ def game_status():
     for i in range(3):
         if position[0][i] == position[1][i] and position[1][i] == position[2][i]:
             return False
+    # Check diagonal
+    if position[0][0] == position[1][1] and position[1][1] == position[2][2]:
+        return False
+    if position[0][2] == position[1][1] and position[1][1] == position[2][0]:
+        return False
     return True
 
 
@@ -53,7 +58,12 @@ def main():
     while game_status():
         board()
         player_move(letter())
-    print("Congrats! " + letter() + " wins!")
+    board()
+    if letter() == "O":
+        winner = "X"
+    else:
+        winner = "O"
+    print("Congrats! " + winner + " wins!")
 
 
 while True:
