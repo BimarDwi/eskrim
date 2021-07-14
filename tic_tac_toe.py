@@ -81,7 +81,7 @@ def main():
         print("Congrats! O wins!")
     if evaluation() == 0:
         board()
-        print("It's a draw.")
+        print("It's a draw. ")
 
 
 while True:
