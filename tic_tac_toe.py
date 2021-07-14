@@ -30,16 +30,16 @@ def player_move(n):
     position[row][column] = n
 
 
-def evaluation():
+def evaluation(curr_position):
     # Check columns
-    for row in position:
+    for row in curr_position:
         if row[0] == row[1] and row[1] == row[2]:
             if row[0] == "X":
                 return 1
             if row[0] == "O":
                 return -1
     # Check row
-    for row in position:
+    for row in curr_position:
         if row == ["X", "X", "X"]:
             value = 1
             return value
@@ -47,18 +47,18 @@ def evaluation():
             value = -1
             return value
     # Check diagonal
-    if position[0][0] == position[1][1] and position[1][1] == position[2][2]:
-        if position[0][0] == "X":
+    if curr_position[0][0] == curr_position[1][1] and curr_position[1][1] == curr_position[2][2]:
+        if curr_position[0][0] == "X":
             value = 1
             return value
-        if position[0][0] == "O":
+        if curr_position[0][0] == "O":
             value = -1
             return value
-    if position[0][2] == position[1][1] and position[1][1] == position[2][0]:
-        if position[0][2] == "X":
+    if curr_position[0][2] == curr_position[1][1] and curr_position[1][1] == curr_position[2][0]:
+        if curr_position[0][2] == "X":
             value = 1
             return value
-        if position[0][2] == "O":
+        if curr_position[0][2] == "O":
             value = -1
             return value
     # Check draw
@@ -69,19 +69,18 @@ def evaluation():
 
 
 def main():
-    print(evaluation())
-    while evaluation() is None:
+    while evaluation(position) is None:
         board()
         player_move(letter())
-    if evaluation() == 1:
+    if evaluation(position) == 1:
         board()
         print("Congrats! X wins!")
-    if evaluation() == -1:
+    if evaluation(position) == -1:
         board()
         print("Congrats! O wins!")
-    if evaluation() == 0:
+    if evaluation(position) == 0:
         board()
-        print("It's a draw. ")
+        print("It's a draw.")
 
 
 while True:
