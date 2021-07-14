@@ -30,39 +30,56 @@ def player_move(n):
     position[row][column] = n
 
 
-def game_status():
+def evaluation():
     # Check columns
-    for i in position:
-        if i[0] == i[1] and i[1] == i[2]:
-            return 1
+    for row in position:
+        if row[0] == row[1] and row[1] == row[2]:
+            if row[0] == "X":
+                return 1
+            if row[0] == "O":
+                return -1
     # Check row
-    for i in range(3):
-        if position[0][i] == position[1][i] and position[1][i] == position[2][i]:
-            return 1
+    for row in position:
+        if row == ["X", "X", "X"]:
+            value = 1
+            return value
+        if row == ["O", "O", "O"]:
+            value = -1
+            return value
     # Check diagonal
     if position[0][0] == position[1][1] and position[1][1] == position[2][2]:
-        return 1
+        if position[0][0] == "X":
+            value = 1
+            return value
+        if position[0][0] == "O":
+            value = -1
+            return value
     if position[0][2] == position[1][1] and position[1][1] == position[2][0]:
-        return 1
+        if position[0][2] == "X":
+            value = 1
+            return value
+        if position[0][2] == "O":
+            value = -1
+            return value
     # Check draw
     if letter_position.count(" ") == 1:
-        return 0
-    return -1
+        value = 0
+        return value
+    return None
 
 
 def main():
-    board()
-    player_move(letter())
-    if game_status() == -1:
-        return main()
-    if game_status() == 1:
+    print(evaluation())
+    while evaluation() is None:
         board()
-        if letter() == "O":
-            winner = "X"
-        else:
-            winner = "O"
-        print("Congrats! " + winner + " wins!")
-    if game_status() == 0:
+        player_move(letter())
+    if evaluation() == 1:
+        board()
+        print("Congrats! X wins!")
+    if evaluation() == -1:
+        board()
+        print("Congrats! O wins!")
+    if evaluation() == 0:
         board()
         print("It's a draw.")
 
