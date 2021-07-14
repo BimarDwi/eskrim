@@ -1,5 +1,4 @@
-
-def board():
+def board(letter_position):
     print(f"   |   |   ")
     print(" " + letter_position[1] + " | " + letter_position[2] + " | " + letter_position[3] + " ")
     print(f"   |   |   ")
@@ -13,14 +12,14 @@ def board():
     print(f"   |   |   ")
 
 
-def letter():
+def letter(letter_position):
     if letter_position.count("X") == letter_position.count("O"):
         return "X"
     else:
         return "O"
 
 
-def player_move(n):
+def player_move(n, letter_position, position):
     print("It's " + str(n) + "'s turn")
     move = int(input("Choose your tile (1-9): "))
     letter_position[move] = n
@@ -32,11 +31,11 @@ def player_move(n):
 
 def evaluation(curr_position):
     # Check columns
-    for row in curr_position:
-        if row[0] == row[1] and row[1] == row[2]:
-            if row[0] == "X":
+    for i in range(3):
+        if curr_position[0][i] == curr_position[1][i] and curr_position[1][i] == curr_position[2][i]:
+            if curr_position[0][i] == "X":
                 return 1
-            if row[0] == "O":
+            if curr_position[0][i] == "O":
                 return -1
     # Check row
     for row in curr_position:
@@ -62,36 +61,35 @@ def evaluation(curr_position):
             value = -1
             return value
     # Check draw
-    if letter_position.count(" ") == 1:
+    if sum(i.count(" ") for i in curr_position) == 0:
         value = 0
         return value
     return None
 
 
 def main():
-    while evaluation(position) is None:
-        board()
-        player_move(letter())
-    if evaluation(position) == 1:
-        board()
-        print("Congrats! X wins!")
-    if evaluation(position) == -1:
-        board()
-        print("Congrats! O wins!")
-    if evaluation(position) == 0:
-        board()
-        print("It's a draw.")
-
-
-while True:
-    letter_position = [" " for x in range(10)]
-    position = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ]
-    a = input("Do you want to play? y or n: ")
-    if a == "y":
-        main()
-    else:
-        break
+    while True:
+        letter_position = []
+        for x in range(10):
+            letter_position.append(" ")
+        position = [
+            [" ", " ", " "],
+            [" ", " ", " "],
+            [" ", " ", " "]
+        ]
+        a = input("Do you want to play? y or n: ")
+        if a == "y":
+            while evaluation(position) is None:
+                board(letter_position)
+                player_move(letter(letter_position), letter_position, position)
+            if evaluation(position) == 1:
+                board(letter_position)
+                print("Congrats! X wins!")
+            if evaluation(position) == -1:
+                board(letter_position)
+                print("Congrats! O wins!")
+            if evaluation(position) == 0:
+                board(letter_position)
+                print("It's a draw.")
+        else:
+            break
