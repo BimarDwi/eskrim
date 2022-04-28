@@ -1,32 +1,41 @@
-def board(letter_position):
+def board(position):
     print(f"   |   |   ")
-    print(" " + letter_position[1] + " | " + letter_position[2] + " | " + letter_position[3] + " ")
-    print(f"   |   |   ")
-    print("___________")
-    print(f"   |   |   ")
-    print(" " + letter_position[4] + " | " + letter_position[5] + " | " + letter_position[6] + " ")
+    print(" " + position[0][0] + " | " + position[0][1] + " | " + position[0][2] + " ")
     print(f"   |   |   ")
     print("___________")
     print(f"   |   |   ")
-    print(" " + letter_position[7] + " | " + letter_position[8] + " | " + letter_position[9] + " ")
+    print(" " + position[1][0] + " | " + position[1][1] + " | " + position[1][2] + " ")
+    print(f"   |   |   ")
+    print("___________")
+    print(f"   |   |   ")
+    print(" " + position[2][0] + " | " + position[2][1] + " | " + position[2][2] + " ")
     print(f"   |   |   ")
 
 
-def letter(letter_position):
-    if letter_position.count("X") == letter_position.count("O"):
+def letter(curr_position):
+    if sum(i.count("X") for i in curr_position) == sum(i.count("O") for i in curr_position):
         return "X"
     else:
         return "O"
 
 
-def player_move(n, letter_position, position):
+def player_move(n, position):
     print("It's " + str(n) + "'s turn")
     move = int(input("Choose your tile (1-9): "))
-    letter_position[move] = n
 
     row = int((move - 1) / 3)
     column = int((move - 1) % 3)
-    position[row][column] = n
+    if position[row][column] == " ":
+        position[row][column] = n
+    else:
+        board(position)
+        print("The cell has been occupied, please choose another cell.")
+        print("   ")
+        player_move(n, position)
+
+
+def computer_move(n, position, move):
+    position[move[0]][move[1]] = n
 
 
 def evaluation(curr_position):
@@ -67,29 +76,125 @@ def evaluation(curr_position):
     return None
 
 
+def minimax(board, depth, isMax):
+    score = evaluation(board)
+    if score == 1:
+        return score
+    if score == -1:
+        return score
+    if score == 0:
+        return score
+    if isMax:
+        best = -1000
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == " ":
+                    board[i][j] = "X"
+                    best = max(best, minimax(board, depth + 1, not isMax))
+                    board[i][j] = " "
+        return best
+
+    else:
+        best = 1000
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == " ":
+                    board[i][j] = "O"
+                    best = min(best, minimax(board, depth + 1, not isMax))
+                    board[i][j] = " "
+        return best
+
+
+def finding_best_move(board):
+    if letter(board) == "X":
+        bes_val = -1000
+        best_move = [-1, -1]
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == " ":
+                    board[i][j] = "X"
+                    move_val = minimax(board, 0, False)
+                    board[i][j] = " "
+                    if move_val > bes_val:
+                        best_move = [i, j]
+                        bes_val = move_val
+        return best_move
+    if letter(board) == "O":
+        bes_val = 1000
+        best_move = [-1, -1]
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == " ":
+                    board[i][j] = "O"
+                    move_val = minimax(board, 0, True)
+                    board[i][j] = " "
+                    if move_val < bes_val:
+                        best_move = [i, j]
+                        bes_val = move_val
+        return best_move
+
+
+def choose_player(game_mode):
+    if game_mode == 1:
+        player = input("p1 as X or p2 as O, p1 or p2?")
+        if player == "p1":
+            return "O"
+        else:
+            return "X"
+    if game_mode == 2:
+        player = input("p1 as X or p2 as O, p1 or p2?")
+        if player == "p1":
+            return "O"
+        else:
+            return "X"
+
+
 def main():
     while True:
-        letter_position = []
-        for x in range(10):
-            letter_position.append(" ")
         position = [
             [" ", " ", " "],
             [" ", " ", " "],
             [" ", " ", " "]
         ]
-        a = input("Do you want to play? y or n: ")
-        if a == "y":
-            while evaluation(position) is None:
-                board(letter_position)
-                player_move(letter(letter_position), letter_position, position)
-            if evaluation(position) == 1:
-                board(letter_position)
-                print("Congrats! X wins!")
-            if evaluation(position) == -1:
-                board(letter_position)
-                print("Congrats! O wins!")
-            if evaluation(position) == 0:
-                board(letter_position)
-                print("It's a draw.")
+        play_status = input("Do you want to play? y or n: ")
+        if play_status == "y":
+            game_mode = int(input("Choose game mode:\n(1) Human vs Human\n(2) Human vs AI\nanswer:"))
+            if game_mode == 1:
+                board(position)
+                while evaluation(position) is None:
+                    turn = letter(position)
+                    player_move(turn, position)
+                    board(position)
+                    if evaluation(position) == 1:
+                        board(position)
+                        print("Congrats! X wins!")
+                    if evaluation(position) == -1:
+                        board(position)
+                        print("Congrats! O wins!")
+                    if evaluation(position) == 0:
+                        board(position)
+                        print("It's a draw.")
+            elif game_mode == 2:
+                computer = choose_player(game_mode)
+                while evaluation(position) is None:
+                    turn = letter(position)
+                    if turn != computer:
+                        board(position)
+                        player_move(turn, position)
+                    else:
+                        com_move = finding_best_move(position)
+                        computer_move(turn, position, com_move)
+                    if evaluation(position) == 1:
+                        board(position)
+                        print("Congrats! X wins!")
+                    if evaluation(position) == -1:
+                        board(position)
+                        print("Congrats! O wins!")
+                    if evaluation(position) == 0:
+                        board(position)
+                        print("It's a draw.")
         else:
             break
+
+
+main()
